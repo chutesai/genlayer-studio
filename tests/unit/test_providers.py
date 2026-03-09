@@ -9,6 +9,35 @@ def test_default_providers_valid():
     assert len(providers) > 0
 
 
+def test_chutesai_default_providers():
+    expected_models = {
+        "zai-org/GLM-5-Turbo",
+        "zai-org/GLM-4.7-TEE",
+        "moonshotai/Kimi-K2.5-TEE",
+        "MiniMaxAI/MiniMax-M2.5-TEE",
+        "Qwen/Qwen3.5-397B-A17B-TEE",
+        "deepseek-ai/DeepSeek-V3.1-TEE",
+        "Qwen/Qwen3-32B",
+        "Qwen/Qwen2.5-72B-Instruct",
+    }
+
+    providers = [
+        provider
+        for provider in get_default_providers()
+        if provider.provider == "chutesai"
+    ]
+
+    assert {provider.model for provider in providers} == expected_models
+    assert {provider.plugin for provider in providers} == {"openai-compatible"}
+    assert {provider.config == {} for provider in providers} == {True}
+    assert {provider.plugin_config["api_key_env_var"] for provider in providers} == {
+        "CHUTESAI_API_KEY"
+    }
+    assert {provider.plugin_config["api_url"] for provider in providers} == {
+        "https://llm.chutes.ai"
+    }
+
+
 @pytest.mark.parametrize(
     "llm_provider",
     [
